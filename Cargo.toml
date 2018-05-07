@@ -1,0 +1,7 @@
+[package]
+name = "something_else"
+version = "0.1.0"
+authors = ["Jayml Mistry <jayml.mistry@gmail.com>"]
+
+[dependencies]
+piston_window = "0.70.0"
