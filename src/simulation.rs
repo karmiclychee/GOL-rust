@@ -1,47 +1,55 @@
-pub struct Simulation {}
 use world::World;
 
-impl Simulation {
-  pub fn new(world: World) -> Simulation { Simulation {} }
+struct EvoCell {
+  x: f32,
+  y: f32,
+  color: Vec<f32>
 }
 
+pub struct Simulation {
+  generation: i32,
+  pub world: World
+}
 
-// require_relative 'world'
+impl Simulation {
+  pub fn new(world: World) -> Simulation {
+    let sim = Simulation {
+      generation: 0,
+      world: world
+    }
 
-// class Evolve::Simulation
-//   attr_reader :world, :generation
+    sim.init
+    sim
+  }
 
-//   def initialize(world)
-//     @world = world
-//     @generation = 0
-//     init
-//   end
+  pub fn init(&self) {
+    self.world.seed
+  }
 
-//   def init
-//     world.seed
-//   end
+  pub fn step(&self) {
+    self.generation += 1;
+    self.world.proliferate();
+    self.world.cull();
+  }
 
-//   def step
-//     @generation += 1
-//     world.proliferate
-//     world.cull
-//   end
+  pub fn get_coordinates(&self) {
+    let m = (1..10).map( |i| i as f32 ).collect::<Vec<f32>>();
 
-//   def get_coordinates
-//     @world.current_grid.map do |cell|
-//       scale = @world.scale
-//       color = cell.skin
-//       padding = 0.5
+    //     @world.current_grid.map do |Evocell|
+    for itt in m.iter() {
+      let scale = self.world.scale;
+      let color = vec![1.0, 0.0, 0.0, 1.0]; //red
+      let padding = 0.5;
 
-//       x = cell.coordinates[:x] * scale
-//       y = cell.coordinates[:y] * scale
+      let x = itt * scale;
+      let y = itt * scale;
 
-//       [
-//         x + padding,              y + padding,              color,
-//         x + scale - (padding*2),  y + padding,              color,
-//         x + padding,              y + scale - (padding*2),  color,
-//         x + scale - (padding*2),  y + scale - (padding*2),  color
-//       ]
-//     end
-//   end
-// end
+      vec![
+        EvoCell { x: x + padding,                y: y + padding,               color: color.clone() },
+        EvoCell { x: x + scale - (padding*2.0),  y: y + padding,               color: color.clone() },
+        EvoCell { x: x + padding,                y: y + scale - (padding*2.0), color: color.clone() },
+        EvoCell { x: x + scale - (padding*2.0),  y: y + scale - (padding*2.0), color: color.clone() }
+      ];
+    }
+  }
+}
